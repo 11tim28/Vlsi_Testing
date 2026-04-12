@@ -11,6 +11,8 @@ module bist_hardware(clk,rst,bistmode,bistpass,bistdone,cut_scanmode,
 
 // Add your code here, below is just temp code so testbench doesn't hang
 
+// Test git
+
 // start temp code
    reg 		 bistdone;
 
