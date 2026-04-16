@@ -8,7 +8,7 @@ module lfsr16(
    reg   [15:0]   lfsr_r, lfsr_w;
 
    // primitive polynomial x^16 + x^5 + x^4 + x^3 + 1
-   wire feedback = lfsr[5] ^ lfsr[4] ^ lfsr[3] ^ lfsr[0];
+   wire feedback = lfsr_r[5] ^ lfsr_r[4] ^ lfsr_r[3] ^ lfsr_r[0];
    assign state = lfsr_r;
    assign probs_out = {lfsr_r[15], lfsr_r[10], lfsr_r[5], lfsr_r[0]};
 
@@ -72,10 +72,10 @@ module bist_hardware(clk,rst,bistmode,bistpass,bistdone,cut_scanmode,
 
 // Add your code here, below is just temp code so testbench doesn't hang
 
-parameter S_IDLE = 0;
-parameter S_SHFT = 1;
-parameter S_CPTR = 2;
-parameter S_DONE = 3;
+parameter S_IDLE = 3'd0;
+parameter S_SHFT = 3'd1;
+parameter S_CPTR = 3'd2;
+parameter S_DONE = 3'd3;
 // parameter S_DONE = 4;
 parameter SIG_GLDN = 16'h0000;
 
@@ -179,7 +179,7 @@ parameter SIG_GLDN = 16'h0000;
             lfsr_en_r         =  1'b0;
             cut_scanmode_r    =  1'b0;
             misr_en_r         =  1'b0;
-            $display(misr_sig);
+            $display("MISR Signature: %h", misr_sig);
             if(misr_sig == SIG_GLDN)   pass_r   =  1'b1;
             else                       pass_r   =  1'b0;
             state_w     =  S_IDLE;
@@ -196,9 +196,9 @@ parameter SIG_GLDN = 16'h0000;
       endcase
    end
 
-   always(posedge clk or posedge rst) begin
+   always@(posedge clk or posedge rst) begin
       if(rst) begin
-         state_r        <=    S_IDLE;
+         state_r        <=    state_w;
          pttrn_cnt_r    <=    12'd0;
          scan_cnt_r     <=    8'd0;
       end
